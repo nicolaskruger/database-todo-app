@@ -47,3 +47,5 @@ class UserService implements IUserService {
     return this.tokenRepository.generateToken(user);
   }
 }
+
+export { UserService };
