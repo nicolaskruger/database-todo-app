@@ -5,25 +5,24 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  try {
-    await sql`ALTER TABLE "User" 
-                  ADD CONSTRAINT lengthName CHECK (length(name) > 2), 
-                  ADD CONSTRAINT validPassword CHECK( password LIKE '%@%');`;
-  } catch (e) {
-    console.log(e);
-  }
+  await sql`ALTER TABLE "User" 
+                  drop CONSTRAINT lengthName,
+                  drop CONSTRAINT validEmail, 
+                  drop CONSTRAINT validPassword;`;
 
-  try {
-    await sql`CREATE VIEW "viewToDoInfo" AS 
-      SELECT t.id id, t.description description, t.done done, s.id "idSub", s.description "sDescription", s.done "sDone"  
+  await sql`ALTER TABLE "User" 
+                  ADD CONSTRAINT lengthName CHECK (length(name) > 2),
+                  ADD CONSTRAINT validEmail CHECK( email LIKE '%@%'), 
+                  ADD CONSTRAINT validPassword CHECK( length(password) > 2);`;
+
+  // await sql`DROP VIEW "viewToDoInfo"`;
+  await sql`CREATE VIEW "viewToDoInfo" AS 
+      SELECT t.id id, t.description description, t.done done, s.id "idSub", s.description "sDescription", s.done "sDone", t."idUser" "idUser"  
                         FROM "ToDo" t 
                     INNER JOIN "SubToDo" s on t.id = s."idToDo"`;
-  } catch (e) {
-    console.log(e);
-  }
 
+  await sql`DROP TRIGGER "deleteCascadeOnDeleteToDo" on "ToDo"`;
   await sql`DROP FUNCTION "deleteSubToDo"()`;
-
   await sql`
     CREATE FUNCTION "deleteSubToDo"() RETURNS trigger AS $$
         BEGIN

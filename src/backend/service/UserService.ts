@@ -32,6 +32,7 @@ class UserService implements IUserService {
   async signIn(user: Omit<IUser, "id">) {
     await this.userRepository.registerUser({
       ...user,
+      password: this.passwordValidator.generate(user.password),
       id: this.idGeneratorRepository.generateId(),
     });
 
@@ -41,7 +42,7 @@ class UserService implements IUserService {
   async login(email: string, password: string) {
     const user = await this.userRepository.findUserByEmail(email);
 
-    if (!user || this.passwordValidator.isValid(password, user?.password))
+    if (!user || !this.passwordValidator.isValid(password, user?.password))
       throw new Error("login error !!!");
 
     return this.tokenRepository.generateToken(user);

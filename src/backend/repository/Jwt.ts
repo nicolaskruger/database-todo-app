@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 class Jwt implements ITokenRepository {
   generateToken(user: IUser) {
     return {
-      token: jwt.sign({ ...user }, process.env.JWT_HASH || ""),
+      token: "Bearer " + jwt.sign({ ...user }, process.env.JWT_HASH || ""),
     };
   }
   getInfoByToken(token: string) {

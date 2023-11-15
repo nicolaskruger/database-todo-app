@@ -1,4 +1,4 @@
-import { ToDo } from "../domain/Todo";
+import { ToDo, ToDoView } from "../domain/Todo";
 import { IIdGeneratorRepository } from "../repository/IIdGenerator";
 import { IToDoRepository } from "../repository/IToDoRepository";
 import { IToDoService } from "./IToDoService";
@@ -43,7 +43,7 @@ class TodoService implements IToDoService {
     this.validPermission(todo, token);
     await this.todoRepository.delete(id);
   }
-  async getFromUser(token: string): Promise<ToDo[]> {
+  async getFromUser(token: string): Promise<ToDoView[]> {
     const user = await this.userService.tokenToUser(token);
     return await this.todoRepository.getFromUser(user.id);
   }
