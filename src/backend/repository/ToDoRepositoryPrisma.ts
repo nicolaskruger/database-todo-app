@@ -4,6 +4,27 @@ import { ToDo, ToDoView, SubTodo } from "../domain/Todo";
 import { IToDoRepository } from "./IToDoRepository";
 
 class ToDoRepositoryPrisma implements IToDoRepository {
+  async getToDoFromSubTodoId(id: string): Promise<ToDo> {
+    return await prisma.toDo.findFirstOrThrow({
+      where: {
+        subTodos: {
+          some: {
+            id: id,
+          },
+        },
+      },
+    });
+  }
+  async alterSubTodo(subToDo: SubTodo): Promise<void> {
+    await prisma.subToDo.update({
+      data: {
+        ...subToDo,
+      },
+      where: {
+        id: subToDo.id,
+      },
+    });
+  }
   async register(todo: ToDo): Promise<void> {
     await prisma.toDo.create({
       data: {
@@ -73,7 +94,13 @@ class ToDoRepositoryPrisma implements IToDoRepository {
       },
     });
   }
-  deleteSubToDo(idSubTodo: string): Promise<void> {
-    throw new Error("Method not implemented.");
+  async deleteSubToDo(idSubTodo: string): Promise<void> {
+    await prisma.subToDo.delete({
+      where: {
+        id: idSubTodo,
+      },
+    });
   }
 }
+
+export { ToDoRepositoryPrisma };

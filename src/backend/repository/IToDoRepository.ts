@@ -8,6 +8,8 @@ interface IToDoRepository {
   getById(id: string): Promise<ToDo | undefined>;
   addSubToDo(idToDo: string, subToDo: Omit<SubTodo, "id">): Promise<void>;
   deleteSubToDo(idSubTodo: string): Promise<void>;
+  alterSubTodo(subToDo: SubTodo): Promise<void>;
+  getToDoFromSubTodoId(id: string): Promise<ToDo>;
 }
 
 export type { IToDoRepository };
