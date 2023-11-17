@@ -1,4 +1,5 @@
 import { Token } from "@/backend/domain/Token";
+import { Loading } from "@/components/loading/loading";
 import { useToken } from "@/hooks/useToken";
 import axios from "axios";
 import { useRouter } from "next/router";
@@ -7,6 +8,8 @@ import { FormEvent, useState } from "react";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const [loading, setLoading] = useState(false);
 
   const { push } = useRouter();
   const [, setToken] = useToken();
@@ -39,7 +42,9 @@ export default function Login() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     e.stopPropagation();
+    setLoading(true);
     await handleLogin();
+    setLoading(false);
   };
 
   return (
@@ -69,6 +74,7 @@ export default function Login() {
 
         {error && <p className="text-red-500">{error}</p>}
       </form>
+      <Loading isLoading={loading} />
     </main>
   );
 }

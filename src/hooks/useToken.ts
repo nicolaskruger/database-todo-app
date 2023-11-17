@@ -14,7 +14,7 @@ const useToken = (): [string, (token: string) => void] => {
     });
   };
 
-  return [token, setToken];
+  return [token, _setToken];
 };
 
 export { useToken };

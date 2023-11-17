@@ -1,4 +1,5 @@
 import { Token } from "@/backend/domain/Token";
+import { Loading } from "@/components/loading/loading";
 import { useToken } from "@/hooks/useToken";
 import axios, { AxiosError } from "axios";
 import { useRouter } from "next/router";
@@ -11,6 +12,7 @@ export default function SignIn() {
   const [password, setPassword] = useState("");
   const { push } = useRouter();
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const [, setToken] = useToken();
 
@@ -45,7 +47,9 @@ export default function SignIn() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     e.stopPropagation();
+    setLoading(true);
     await handleSignIn();
+    setLoading(false);
   };
 
   return (
@@ -103,6 +107,7 @@ export default function SignIn() {
         <button className="hover:text-pink-500">sign in</button>
         {error && <p className="text-red-500">{error}</p>}
       </form>
+      <Loading isLoading={loading} />
     </main>
   );
 }
