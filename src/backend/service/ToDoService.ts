@@ -17,10 +17,19 @@ class TodoService implements IToDoService {
     this.todoRepository = todoRepository;
     this.generateIdRepository = generateIdRepository;
   }
+  async registerSubTodo(subToDo: SubTodo, token: string): Promise<void> {
+    await this.validateToDo(subToDo.idToDo, token);
+    await this.todoRepository.registerSubTodo(subToDo);
+  }
 
-  async validateSuTodo(id: string, token: string) {
-    const toDo = await this.todoRepository.getToDoFromSubTodoId(id);
-    this.validPermission(toDo, token);
+  async validateToDo(idTodo: string, token: string) {
+    const toDo = await this.todoRepository.getById(idTodo);
+    this.validPermission(toDo as ToDo, token);
+  }
+
+  async validateSuTodo(idSubToDo: string, token: string) {
+    const toDo = await this.todoRepository.getToDoFromSubTodoId(idSubToDo);
+    this.validPermission(toDo as ToDo, token);
   }
 
   async updateSubTodo(subToDo: SubTodo, token: string): Promise<void> {
@@ -30,27 +39,30 @@ class TodoService implements IToDoService {
 
   private async validPermission(todo: ToDo, token: string): Promise<void> {
     const user = await this.userService.tokenToUser(token);
-    if (user.id !== todo.idUser) throw new Error("unauthorized");
+    const findToDo = await this.todoRepository.getById(todo.id);
+    if (user.id !== findToDo?.idUser) throw new Error("unauthorized");
   }
 
   async register(todo: ToDo, token: string): Promise<void> {
-    this.validPermission(todo, token);
+    const user = await this.userService.tokenToUser(token);
     await this.todoRepository.register({
       ...todo,
+      idUser: user.id,
       id: this.generateIdRepository.generateId(),
     });
   }
   async alter(todo: ToDo, token: string): Promise<void> {
-    this.validPermission(todo, token);
+    const { id } = (await this.todoRepository.getById(todo.id)) as ToDo;
+    await this.validPermission(todo, token);
     await this.todoRepository.alter({
       ...todo,
-      id: this.generateIdRepository.generateId(),
+      id,
     });
   }
   async delete(id: string, token: string): Promise<void> {
     const todo = await this.todoRepository.getById(id);
     if (!todo) throw new Error("todo not found");
-    this.validPermission(todo, token);
+    await this.validPermission(todo, token);
     await this.todoRepository.delete(id);
   }
   async getFromUser(token: string): Promise<ToDoView[]> {
@@ -63,3 +75,5 @@ class TodoService implements IToDoService {
     await this.todoRepository.deleteSubToDo(id);
   }
 }
+
+export { TodoService };

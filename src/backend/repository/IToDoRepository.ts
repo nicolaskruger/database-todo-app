@@ -10,6 +10,7 @@ interface IToDoRepository {
   deleteSubToDo(idSubTodo: string): Promise<void>;
   alterSubTodo(subToDo: SubTodo): Promise<void>;
   getToDoFromSubTodoId(id: string): Promise<ToDo>;
+  registerSubTodo(subToDo: SubTodo): Promise<void>;
 }
 
 export type { IToDoRepository };

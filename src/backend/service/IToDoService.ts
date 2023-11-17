@@ -7,6 +7,7 @@ interface IToDoService {
   getFromUser(token: string): Promise<ToDoView[]>;
   deleteSubTodo(id: string, token: string): Promise<void>;
   updateSubTodo(subToDo: SubTodo, token: string): Promise<void>;
+  registerSubTodo(subToDo: SubTodo, token: string): Promise<void>;
 }
 
 export type { IToDoService };

@@ -4,6 +4,11 @@ import { ToDo, ToDoView, SubTodo } from "../domain/Todo";
 import { IToDoRepository } from "./IToDoRepository";
 
 class ToDoRepositoryPrisma implements IToDoRepository {
+  async registerSubTodo(subToDo: SubTodo): Promise<void> {
+    await prisma.subToDo.create({
+      data: subToDo,
+    });
+  }
   async getToDoFromSubTodoId(id: string): Promise<ToDo> {
     return await prisma.toDo.findFirstOrThrow({
       where: {
@@ -78,7 +83,28 @@ class ToDoRepositoryPrisma implements IToDoRepository {
       };
     }, {} as Dictionary<string, ToDoView>);
 
-    return Object.keys(todoDictionary).map((key) => todoDictionary[key]);
+    const todoList = Object.keys(todoDictionary).map(
+      (key) => todoDictionary[key]
+    );
+    const anotherToDo = (
+      await prisma.toDo.findMany({
+        include: {
+          subTodos: true,
+        },
+        where: {
+          AND: {
+            idUser: userId,
+            id: {
+              notIn: todoList.map((v) => v.id),
+            },
+          },
+        },
+      })
+    ).map((v) => ({
+      ...v,
+      subToDo: v.subTodos,
+    }));
+    return [...anotherToDo, ...todoList];
   }
   async getById(id: string): Promise<ToDo | undefined> {
     return await prisma.toDo.findUniqueOrThrow({ where: { id } });

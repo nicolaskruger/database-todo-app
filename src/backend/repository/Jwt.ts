@@ -11,7 +11,10 @@ class Jwt implements ITokenRepository {
   }
   getInfoByToken(token: string) {
     try {
-      const user = jwt.verify(token, process.env.JWT_HASH || "") as IUser;
+      const user = jwt.verify(
+        token.split(" ")[1],
+        process.env.JWT_HASH || ""
+      ) as IUser;
 
       return user;
     } catch (e) {

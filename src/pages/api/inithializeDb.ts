@@ -15,7 +15,7 @@ export default async function handler(
                   ADD CONSTRAINT validEmail CHECK( email LIKE '%@%'), 
                   ADD CONSTRAINT validPassword CHECK( length(password) > 2);`;
 
-  // await sql`DROP VIEW "viewToDoInfo"`;
+  await sql`DROP VIEW "viewToDoInfo"`;
   await sql`CREATE VIEW "viewToDoInfo" AS 
       SELECT t.id id, t.description description, t.done done, s.id "idSub", s.description "sDescription", s.done "sDone", t."idUser" "idUser"  
                         FROM "ToDo" t 
@@ -26,8 +26,8 @@ export default async function handler(
   await sql`
     CREATE FUNCTION "deleteSubToDo"() RETURNS trigger AS $$
         BEGIN
-            DELETE FROM "SubToDo" s where new.id = s."idToDo";
-            RETURN new;
+            DELETE FROM "SubToDo" s where old.id = s."idToDo";
+            RETURN old;
         END;
     $$ LANGUAGE plpgsql; 
   `;

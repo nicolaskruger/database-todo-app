@@ -8,7 +8,9 @@ import { Jwt } from "../repository/Jwt";
 import { ToDoRepositoryPrisma } from "../repository/ToDoRepositoryPrisma";
 import { UserRepositoryPrisma } from "../repository/UserRepositoryPrisma";
 import { UUIDV4 } from "../repository/uuidV4";
+import { IToDoService } from "../service/IToDoService";
 import { IUserService } from "../service/IUserService";
+import { TodoService } from "../service/ToDoService";
 import { UserService } from "../service/UserService";
 
 const idGeneratorRepository: IIdGeneratorRepository = new UUIDV4();
@@ -22,5 +24,10 @@ const userService: IUserService = new UserService(
   tokenRepository,
   idGeneratorRepository
 );
+const toDoService: IToDoService = new TodoService(
+  userService,
+  todoRepository,
+  idGeneratorRepository
+);
 
-export { userService };
+export { userService, toDoService };

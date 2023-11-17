@@ -4,7 +4,7 @@ export type Controller = {
   POST?: NextApiHandler;
   GET?: NextApiHandler;
   DELETE?: NextApiHandler;
-  UPDATE?: NextApiHandler;
+  PUT?: NextApiHandler;
   PATCH?: NextApiHandler;
 };
 
