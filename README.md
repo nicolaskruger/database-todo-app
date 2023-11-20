@@ -1,40 +1,78 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Trabalho de banco de dados GB
 
-## Getting Started
+Desenvolver uma aplicação completa utilizando a linguagem de programação orientada a objetos de sua preferência, que faça uso de um sistema de gerenciamento de banco de dados. A aplicação pode ter qualquer finalidade, desde que atenda aos requisitos abaixo:
 
-First, run the development server:
+- Utilizar uma linguagem orientada a objetos de sua preferência
+- Utilizar um SGBD relacional
+- Possuir alguma forma de interface (ex.: Terminal, web, GUI ... )
+- Fazer uso de visão
+- Fazer uso de gatilhos
+- Fazer uso de restrição de tabela (CHECK)
+- Implementar as funções básicas do CRUD (Criar, Ler, Atualizar, Deletar) (Pode ser utilizado um ORM)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## O que foi feito
+
+Foi feito um aplicativo de ToDo list(lista de tarefas) com Login
+
+## Check list
+
+- [x] Utilizar uma linguagem orientada a objetos de sua preferência
+
+A linguagem utilizada foi o **TypeScript** que é uma linguagem multi paradigma q também pode ser utilizada com orientada a objeto
+
+- [x] Utilizar um SGBD relacional
+
+O SGBD relacinal utilizado é o **Postgress**
+
+- [x] Possuir alguma forma de interface (ex.: Terminal, web, GUI ... )
+
+A interface utilizada é um frontend utilizando o framework **Next**
+
+- [x] Fazer uso de visão
+
+Foi feita a seguinte visão:
+
+```sql
+        CREATE VIEW "viewToDoInfo" AS
+        SELECT t.id id, t.description description, t.done done, s.id "idSub", s.description "sDescription", s.done "sDone", t."idUser" "idUser"
+        FROM "ToDo" t
+        INNER JOIN "SubToDo" s on t.id = s."idToDo"
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- [x] Fazer uso de gatilhos
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+Foi feito o seguinte gatilho
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+```sql
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+CREATE FUNCTION "deleteSubToDo"() RETURNS trigger AS $$
+        BEGIN
+            DELETE FROM "SubToDo" s where old.id = s."idToDo";
+            RETURN old;
+        END;
+    $$ LANGUAGE plpgsql;
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+CREATE TRIGGER "deleteCascadeOnDeleteToDo"
+            BEFORE DELETE ON "ToDo"
+            FOR EACH row
+            EXECUTE FUNCTION "deleteSubToDo"()
+```
 
-## Learn More
+- [x] Fazer uso de restrição de tabela (CHECK)
 
-To learn more about Next.js, take a look at the following resources:
+Foi feita as seguintes restrições
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```sql
+ALTER TABLE "User"
+    ADD CONSTRAINT lengthName CHECK (length(name) > 2),
+    ADD CONSTRAINT validEmail CHECK( email LIKE '%@%'),
+    ADD CONSTRAINT validPassword CHECK( length(password) > 2);
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- [x] Implementar as funções básicas do CRUD (Criar, Ler, Atualizar, Deletar) (Pode ser utilizado um ORM)
 
-## Deploy on Vercel
+Para funções basicas do crud foi utilizado o ORM **Prisma**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Site do app
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+[link](https://database-todo-htvns6z7c-nicolaskruger.vercel.app/)
