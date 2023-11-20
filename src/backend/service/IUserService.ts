@@ -5,6 +5,7 @@ interface IUserService {
   login: (email: string, password: string) => Promise<Token>;
   signIn: (user: Omit<IUser, "id">) => Promise<Token>;
   tokenToUser: (token: string) => Promise<IUser>;
+  me: (token: string) => Promise<IUser>;
 }
 
 export type { IUserService };

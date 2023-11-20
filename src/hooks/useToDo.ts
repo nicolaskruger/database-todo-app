@@ -41,7 +41,7 @@ const useToDo = () => {
     setIsLoading(true);
     await index.current.put("/api/todo", todo);
     await attToDos();
-    setIsLoading(true);
+    setIsLoading(false);
   };
 
   const deleteToDo = async (id: string) => {
@@ -67,7 +67,7 @@ const useToDo = () => {
 
   const deleteSubToDo = async (id: string) => {
     setIsLoading(true);
-    await index.current.delete("/api/subtoo", { params: { id } });
+    await index.current.delete("/api/subtodo", { params: { id } });
     await attToDos();
     setIsLoading(false);
   };

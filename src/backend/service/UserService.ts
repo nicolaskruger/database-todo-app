@@ -23,6 +23,12 @@ class UserService implements IUserService {
     this.tokenRepository = tokenRepository;
     this.idGeneratorRepository = idGeneratorRepository;
   }
+  async me(token: string) {
+    const { id } = this.tokenRepository.getInfoByToken(token);
+    const user = await this.userRepository.findById(id);
+    if (user == null) throw new Error("User not found !!!");
+    return user;
+  }
   async tokenToUser(token: string): Promise<IUser> {
     const { id } = this.tokenRepository.getInfoByToken(token);
     const user = await this.userRepository.findById(id);
